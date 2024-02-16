@@ -1,0 +1,60 @@
+<?php
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
+}
+
+add_hook('AdminAreaFooterOutput', 1, function ($vars) {
+    try {
+        $filename = basename($_SERVER['SCRIPT_NAME']);
+        if ($vars['pagetitle'] === "Apps & Integrations" && $vars['filename'] === "index") {
+            $htmlStyle = ".powered-by {
+                display: inline;
+                font-size: 18px;
+            }";
+            $htmlJquery = "
+                var htmlText = '<div class=\"powered-by\">Powered by <span class=\"ChangeColor\"> <b>GreenClick </b></span> MARKETPLACE.</div>';
+                $('.hidden-xs.hidden-sm').html(htmlText);";
+        } elseif ($vars['pagetitle'] === "System Settings") {
+            $htmlStyle = "";
+            $htmlJquery = "                
+                var htmlText = 'Set up & configure your <span class=\"ChangeColor\"><b> GreenClick </b></span> MarketPlace.';
+                $('.lead').html(htmlText);";
+        } elseif ($filename === "update.php") {
+            $htmlJquery = "   
+                $('#contentarea div h1').html('Update <span class=\"ChangeColor\"><b> GreenClick </b></span> Platform'); 
+            ";
+        }
+        $html = "<style>
+            #wizardStep0 .wizard-transition-step .title {
+                font-size: 40px;
+            }
+
+            .ChangeColor {
+                color: rgb(89, 194, 122);
+            }" . $htmlStyle . "
+            </style>
+            <script type='text/javascript'>
+            $(document).ready(function(){
+                $('#Menu-Utilities-Update').html('Update <span class=\"ChangeColor\"><b> GreenClick </b></span>'); 
+                $('#Menu-Utilities-WHMCS_Connect').html('<span class=\"ChangeColor\"><b> GreenClick </b></span> Connect'); 
+                    $('#Menu-Config-SetupWizard').click(function(){
+                        var myInterval = setInterval(function() {
+                            var textdata = $('#wizardStep0 .wizard-transition-step .title').text();
+                            if (textdata !== 'Welcome to  GreenClick! ') {
+                                // console.log(textdata.replace(/ /g, '_'));
+                                var text = 'Welcome to <span class=\"ChangeColor\"><b> GreenClick! </b></span>';
+                                $('#wizardStep0 .wizard-transition-step .title').html(text); 
+                            } else {
+                                clearInterval(myInterval);
+                                myInterval = null;
+                            }
+                        }, 100);
+                    });
+                " . $htmlJquery . "
+            });
+            </script>";
+        return $html;
+    } catch (\Exception $e) {
+        logActivity("Error GreenClick Text Hook" . $e->getMessage());
+    }
+});

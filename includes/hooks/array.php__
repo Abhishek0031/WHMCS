@@ -1,0 +1,62 @@
+<?php
+
+use WHMCS\Database\Capsule;
+
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
+}
+
+// add_hook('ClientAreaFooterOutput', 1, function($vars) {
+//     echo "<pre>";
+// print_r($_SESSION);
+// die;
+// });
+//ShoppingCartValidateProductUpdate
+add_hook('ShoppingCartValidateProductUpdate', 1, function($vars) {
+try{
+    // echo '<pre>';
+    // print_r($vars);
+    // die;
+$fieldName = "exchangeCurrency|Agree Exchange Currency";
+$type = "client";
+$clientId = isset($_SESSION['uid']) ? (int)$_SESSION['uid'] : 0;
+$custumFeildData = Capsule::table('tblcustomfields')
+->join('tblcustomfieldsvalues', 'tblcustomfieldsvalues.fieldid', '=', 'tblcustomfields.id' )
+->where([
+    ['tblcustomfields.fieldname', 'like', $CheckFieldName],
+    ['tblcustomfields.type', $type],
+    ['tblcustomfieldsvalues.relid', $clientId]
+])
+->value(
+    'tblcustomfieldsvalues.value',
+);
+// echo "<pre>";
+// var_dump($custumFeildData);
+// print_r($vars);
+//     die();
+if($custumFeildData !== 'on'){
+    return '<b>Please ensure that the client is aware of the price exchange by checking their profile.</b>';
+}
+} catch (\Exception $e) {
+    logActivity("Error Exchange Currency Hook" . $e->getMessage());
+}
+});
+
+    
+
+
+
+
+//     $data = Capsule::table('tblusers')->get();
+//     foreach($data as $item ){
+//         $arr[$item->email] = $item;
+//     }
+//     global $customadminpath;
+// $systemURL = $CONFIG['SystemURL'];
+// $path = $systemURL . '/' . $customadminpath;
+
+// Capsule::table('tblcustomfields')
+// ->where([
+//     ['fieldname', 'like', $CheckFieldName],
+//     ['type', $type]
+// ])->get();  

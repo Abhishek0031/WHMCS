@@ -1,0 +1,97 @@
+.navigationMenu{
+  background-color: #404040;
+ }
+ .parentMenue {
+    display: inline-block;
+    color: #fff;
+    text-align: center;
+    padding: 12px 12px;
+    text-decoration: none;
+    font-size: 17px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 100px;
+  }
+  .parentMenuAnchor{
+    color: #fff;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  .parentMenue.active{
+    background-color: #04AA6D;
+  }
+  .parentMenuAnchor:active {
+    color: #fff;
+    text-decoration: none;
+  }
+  .parentMenuAnchor:hover{
+    color: #fff;
+    text-decoration: none;
+  }
+  .parentMenuAnchor:visited{
+    color:#fff;
+    text-decoration: none;
+  }
+  .parentMenuAnchor:link{
+    color: #fff;
+    text-decoration: none;
+  }
+  .parentMenue.active .sub_menu {
+    display: block;
+    list-style-type: none;
+    position: absolute;
+    background-color: darkgray;
+    margin-top: 14px;
+    padding: 8px 16px;
+    margin-left: -16px;
+    width: 100%;
+    max-width: 160px;
+  }
+  .subMenuListMenuAnchor{
+    color:#fff;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+  .subMenuListMenuAnchor:active {
+    color: #fff;
+    text-decoration: none;
+  }
+  .subMenuListMenuAnchor:hover{
+    color: #fff;
+    text-decoration: none;
+  }
+  .subMenuListMenuAnchor:visited{
+    color:#fff;
+    text-decoration: none;
+  }
+  .subMenuListMenuAnchor:link{
+    color: #fff;
+    text-decoration: none;
+  }
+  .sub_menu{
+    display: none;
+  }
+  .child_menu{
+    display:none;
+  }
+  .sub_menu_list.active .child_menu {
+    display: block;  
+    list-style-type: none;
+    position: absolute;
+    background-color: #04AA6D;
+    padding: 6px;
+    margin-top: 5px;
+    width: max-content;
+    left: 160px;
+    z-index: 9999;
+  }
+ 
+  .parent_menu{
+    display: none;
+  }
+  .navigationMenu{
+    color: #fff;
+  }
+ 
+ 
+ 
