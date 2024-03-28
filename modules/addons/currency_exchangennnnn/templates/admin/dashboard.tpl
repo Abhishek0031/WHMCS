@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <a href="">
   <div class="menu_bar ticket-tag-menu">
-    <img src="https://whmcs81.shinedezign.pro/modules/addons/affiliate/images/wgs-logo.svg">      
+    <img src="{$tplVar['rootURL']}/modules/addons/pay_to_address/assets/image/wgs-logo.svg">      
     <ul>
       <li class="active"><a href="">
         <span class="glyphicon glyphicon-cog"></span>

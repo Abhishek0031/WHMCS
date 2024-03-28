@@ -14,4 +14,5 @@ $db_tls_verify_cert = '';
 $cc_encryption_hash = 'lCuNi4zQORxEcFBqK0aPCk14gZNjS37N2TL8YYti1E9eJhYeNApvS9tGmgtR9MDU';
 $templates_compiledir = 'templates_c';
 $mysql_charset = 'utf8';
+// $disable_hook_loading = true;
 

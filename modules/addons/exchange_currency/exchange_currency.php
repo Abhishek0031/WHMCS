@@ -28,24 +28,7 @@ function exchange_currency_config()
   }
 
 
-//   function exchange_currency_activate() 
-// {
-//     try{
-//     return 'success';
-// }catch (Exception $e) {
-//     logActivity('fail to Create (exchange_currency) Table :' .$e->getMessage()); 
-// }
-// }
-
-//   function exchange_currency_deactivate()
-//   { 
-//     try{
-//     return 'success';
-// } catch (\Exception $e) {
-//     return ['status' => "error", 'description' => 'Unable to deactivate module: ' . $e->getMessage(),];
-// }
-// }
-  function exchange_currency_output($vars){
+function exchange_currency_output($vars){
 try{
     $whmcs = WHMCS\Application::getInstance();
     $action = !empty($whmcs->get_req_var("action")) ? $whmcs->get_req_var("action") : 'dashboard';

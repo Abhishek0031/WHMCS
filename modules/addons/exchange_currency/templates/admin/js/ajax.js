@@ -5,6 +5,7 @@ $(document).ready(function(){
             buttons: ["Cancel", "Yes"],
           })
           .then((confirm) => {
+            // console.log(confirm)
             if (confirm) {
                 serializedData = $("#frmUpdate").serialize()
                 checkTable = $('#editCriteria').attr('checkTable');
@@ -43,6 +44,7 @@ $(document).ready(function(){
                               })
                               .then((checkbtn) => {
                                 window.location.reload(true);
+                                // console.log(checkbtn)
                               });
                         }
                        
@@ -51,6 +53,7 @@ $(document).ready(function(){
 
             } else {
                 swal("Fail", "Fail to Update Currency!", "error");
+            //   swal("Fail to Update Currency!");
             }
           });
 
@@ -58,19 +61,13 @@ $(document).ready(function(){
 
     //« Choose a Different Type Button in 2nd step
     $('#goBack').click(function(){
-        // $('.container').show(300,'swing');
-        // $('#criteria-addons').hide(300,'swing');
-        // $('#showFooter').hide(300,'swing');
-        // $('#criteria-domains').hide(300,'swing');
-        // $('#step1').addClass('active-step');
-        // $('#step2').removeClass('active-step');
-$('.container').fadeIn(200);
-$('#criteria-addons, #showFooter, #criteria-domains').fadeOut(200);
-$('#step1').addClass('active-step');
-$('#step2').removeClass('active-step');
-
+        $('.container').show(300,'swing');
+        $('#criteria-addons').hide(300,'swing');
+        $('#showFooter').hide(300,'swing');
+        $('#criteria-domains').hide(300,'swing');
+        $('#step1').addClass('active-step');
+        $('#step2').removeClass('active-step');
     })
-
     //Continue » button in 2nd step
     $('#Continue').click(function(){
         serializedData = $("#frmUpdate").serialize()
@@ -140,21 +137,14 @@ $('#step2').removeClass('active-step');
                         step3Html += `<strong>Registration Period: ` +response['regperiod'] +` Year</strong><br/>
                         <strong>Addons: ` +response['domainaddons'] +`</strong><br/>`;             
                     }
-                    // $('#bulkpricingupdater-review').html(step3Html);
-                    // $('#criteria-addons').hide(300,'swing');
-                    // $('#criteria-domains').hide(300,'swing');
-                    // $('#showFooter').hide(300,'swing');
-                    // $('#step-3').show(300, 'swing');
-                    // $('#step3').addClass('active-step');
-                    // $('#step2').removeClass('active-step');
-                    // $('#editCriteria').attr('checkTable',checkTableName);
                     $('#bulkpricingupdater-review').html(step3Html);
-$('#criteria-addons, #criteria-domains, #showFooter').fadeOut(200);
-$('#step-3').fadeIn(200);
-$('#step3').addClass('active-step');
-$('#step2').removeClass('active-step');
-$('#editCriteria').attr('checkTable', checkTableName);
-
+                    $('#criteria-addons').hide(300,'swing');
+                    $('#criteria-domains').hide(300,'swing');
+                    $('#showFooter').hide(300,'swing');
+                    $('#step-3').show(300, 'swing');
+                    $('#step3').addClass('active-step');
+                    $('#step2').removeClass('active-step');
+                    $('#editCriteria').attr('checkTable',checkTableName);
                 }
             }
         });
@@ -163,28 +153,16 @@ $('#editCriteria').attr('checkTable', checkTableName);
 
     //edit criteria button in 3rd step
     $('#editCriteria').click(function(){
-        // checkTable = $('#editCriteria').attr('checkTable');
-        // if(checkTable == 'tbldomainpricing'){
-        //     $('#criteria-domains').show(300,'swing');
-        // } else{
-        //     $('#criteria-addons').show(300,'swing');
-        // }
-        // $('#step2').addClass('active-step');
-        // $('#step3').removeClass('active-step');
-        // $('#step-3').hide(300, 'swing');
-        // $('#showFooter').show();
-
         checkTable = $('#editCriteria').attr('checkTable');
-if (checkTable == 'tbldomainpricing') {
-    $('#criteria-domains').fadeIn(200);
-} else {
-    $('#criteria-addons').fadeIn(200);
-}
-$('#step2').addClass('active-step');
-$('#step3').removeClass('active-step');
-$('#step-3').fadeOut(200);
-$('#showFooter').fadeIn(200);
-
+        if(checkTable == 'tbldomainpricing'){
+            $('#criteria-domains').show(300,'swing');
+        } else{
+            $('#criteria-addons').show(300,'swing');
+        }
+        $('#step2').addClass('active-step');
+        $('#step3').removeClass('active-step');
+        $('#step-3').hide(300, 'swing');
+        $('#showFooter').show();
 
     })  
     $.ajax({
@@ -222,32 +200,34 @@ function loadStep(tableName) {
             var newHtml = '';
             var bodyHtml = '';
             $('#productAddon').append(newHtml);
-            if(tableName == 'tblproducts') {
-                $('.container').fadeOut(200);
-                $('#showFooter, #criteria-addons').fadeIn(200);
-                $('#heading').html('Products/Services Criteria');
-                for (x in response) {
-                    bodyHtml += '<option value='+ response[x]["id"] + '>' + response[x]['product_group_name'] + '-' + response[x]['product_name'] + '</option>';
+            if(tableName == 'tblproducts'){
+                $('.container').hide(300,'swing');
+                $('#showFooter').show(300,'swing');
+                $('#criteria-addons').show(300,'swing');
+                $('#heading').html('Products/Services Criteria')
+                for (x in response){
+                    bodyHtml = bodyHtml + '<option value='+ response[x]["id"] + ">" + response[x]['product_group_name'] + '-' + response[x]['product_name'] + "</option>";
                 }
-            } else if(tableName == 'tbladdons') {
-                $('.container').fadeOut(200);
-                $('#showFooter, #criteria-addons').fadeIn(200);
-                $('#heading').html('Addons Criteria');
-                for (x in response) {
-                    bodyHtml += '<option value='+ response[x]["id"] + '>' + response[x]['name'] + '</option>';
+            } else if(tableName == 'tbladdons'){
+                $('.container').hide(300,'linear');
+                $('#showFooter').show(300,'linear');
+                $('#criteria-addons').show(300,'linear');
+                for (x in response){
+                    bodyHtml = bodyHtml + '<option value='+ response[x]["id"] + ">" + response[x]['name'] + "</option>";
+                    $('#heading').html('Addons Criteria')
                 }
-            } else if(tableName == 'tbldomainpricing') {
-                for (x in response) {
-                    bodyHtml += '<label class="checkbox-inline"><input type="checkbox" name="domaintlds[]" value='+ response[x]['extension'] +'>'+ response[x]['extension'] +'</label>';
+            } else if(tableName == 'tbldomainpricing'){
+                for (x in response){
+                    bodyHtml = bodyHtml + '<label class="checkbox-inline"><input type="checkbox" name="domaintlds[]" value='+ response[x]['extension'] +'>'+ response[x]['extension'] +'</label>';
+                    $('#domaincheck').html(bodyHtml);
+                    $('.container').hide(300,'linear');
+                    $('#criteria-addons').hide(300,'linear');
+                    $('#showFooter').show(300,'linear');
+                    $('#criteria-domains').show(300,'swing');
                 }
-                $('#domaincheck').html(bodyHtml);
-                $('.container, #criteria-addons').fadeOut(200);
-                $('#showFooter').fadeIn(200);
-                $('#criteria-domains').fadeIn(200);
             }
             $('#productAddon').html(bodyHtml);
         }
-        
     });
     $('#step2').addClass('active-step');
     $('#step1').removeClass('active-step');

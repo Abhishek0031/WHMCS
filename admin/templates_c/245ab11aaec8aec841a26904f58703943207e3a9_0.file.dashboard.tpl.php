@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.36, created on 2024-02-14 09:52:51
+/* Smarty version 3.1.36, created on 2024-02-23 12:25:27
   from 'C:\xampp\htdocs\whmcs\modules\addons\exchange_currency\templates\admin\dashboard.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.36',
-  'unifunc' => 'content_65cc7f63c14c15_61765436',
+  'unifunc' => 'content_65d880a75f0e52_90225306',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '245ab11aaec8aec841a26904f58703943207e3a9' => 
     array (
       0 => 'C:\\xampp\\htdocs\\whmcs\\modules\\addons\\exchange_currency\\templates\\admin\\dashboard.tpl',
-      1 => 1707900693,
+      1 => 1708587045,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_65cc7f63c14c15_61765436 (Smarty_Internal_Template $_smarty_tpl) {
+function content_65d880a75f0e52_90225306 (Smarty_Internal_Template $_smarty_tpl) {
 ?><div style="float: left; width: 100%">
   <link
     href="../modules/addons/exchange_currency/assets/css/style.css"

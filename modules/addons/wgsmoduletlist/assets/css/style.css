@@ -1,0 +1,58 @@
+.setting {
+    padding: 20px;
+    box-shadow: 0px 0px 10px #00000014;
+}
+.setting input.btn.btn-primary {
+    margin-top: 20px;
+}
+.setting h2 {
+    margin-top: 0;
+    font-weight: 600;
+}
+
+/** Header CSS **/
+.add_hdr {
+    background: transparent;
+    margin: 0px;
+    padding: 5px 2%;
+    width: 100%;
+    margin-bottom: 23px;
+    display: flex;
+    justify-content: space-between !important;
+    align-items: center;
+    box-shadow: 0 3px 10px #0000002b;
+}
+.add_nav {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+}
+.add_nav ul {
+    margin: 0px;
+    padding: 0px;
+    float: right;
+}
+.add_nav ul li {
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    line-height: 52px;
+    list-style: none;
+}
+.add_nav ul li a {
+    color: #1a4d80;
+    display: block;
+    font-size: 14px;
+    margin: 0;
+    padding: 0 21px !important;
+    text-decoration: none;
+}
+a.addmoduleproduct, a.addproduct {
+    margin-bottom: 20px;
+    float: right;
+    display: flex;
+    background: #1a4d80;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+}

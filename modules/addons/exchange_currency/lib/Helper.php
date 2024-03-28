@@ -4,6 +4,9 @@ namespace WHMCS\Module\Addon\exchange_currency;
 
 use WHMCS\Database\Capsule;
 
+
+use WHMCS\Domains;
+
 class Helper
 {
     public function getTableData($postData)
@@ -65,6 +68,7 @@ class Helper
                 foreach ($product_groups as $product_group) {
                     $product_names[] = $product_group->product_group_name  . '-' . $product_group->product_name;
                 }
+
                 $newArrayStep3['currency'] = $addoncurrid_name;
                 $newArrayStep3['names'] = $product_names;
                 $newArrayStep3['status'] = $array['addonstatus'];
@@ -109,8 +113,8 @@ class Helper
         }
     }
 
-
-    private function getClientArray($currency){
+    private function getCurrencyArray($currency)
+    {
         $clientCurrency = Capsule::table('tblclients')
             ->where('currency', $currency)
             ->select('id')
@@ -124,11 +128,12 @@ class Helper
     public function updatePrice($postData)
     {
         try {
+
             if ($postData['tablename'] == 'tblproducts') {
                 $addonids = $postData['addonids'];
                 $addonstatus = $postData['addonstatus'];
                 $currency = $postData['addoncurrid'];
-                $currencyMatchClient = $this->getClientArray($currency);
+                $currencyMatchClient = $this->getCurrencyArray($currency);
 
                 $hostingValues = Capsule::table('tblhosting')
                     ->whereIn('packageid', $addonids)
@@ -143,9 +148,7 @@ class Helper
                     $configoptionsrecurring = 'empty';
                     $promoid = $hostingData->promoid;
                     $newamount = recalcRecurringProductPrice($id, $userid, $hostingData->packageid, $billingcycle, $configoptionsrecurring, $promoid);
-                    // echo "<pre>";
-                    // print_r($newamount);
-                    // die;
+
                     if ($newamount) {
                         $data =  Capsule::table('tblhosting')->where('id', $hostingData->id)->update([
                             "amount" =>  $newamount
@@ -156,13 +159,14 @@ class Helper
                 $addonids = $postData['addonids'];
                 $addonstatus = $postData['addonstatus'];
                 $currency = $postData['addoncurrid'];
-                $currencyMatchClient = $this->getClientArray($currency);
+                $currencyMatchClient = $this->getCurrencyArray($currency);
                 $addonHostingData = Capsule::table('tblhostingaddons')->whereIn('addonid', $addonids)->whereIn('status', $addonstatus)->whereIn('userid', $currencyMatchClient)->get();
+
                 foreach ($addonHostingData as $addonHostingDatas) {
                     $currencyId = Capsule::table("tblcurrencies")->where('default', 1)->value('id');
                     if ($currencyId) {
-                        $amount = convertCurrency($addonHostingDatas->recurring, $currencyId, $addonHostingDatas->userid);
-                        if ($amount) {
+                        $amount = $this->recalcRecurringAddonProductPrices($addonHostingDatas->userid, $addonHostingDatas->addonid, $addonHostingDatas->billingcycle);
+                        if ($amount>=0) {
                             Capsule::table('tblhostingaddons')->where('id', $addonHostingDatas->id)->update([
                                 "recurring" => $amount
                             ]);
@@ -172,7 +176,7 @@ class Helper
             } elseif ($postData['tablename'] == 'tbldomainpricing') {
                 $currency = $postData['domaincurrid'];
                 $domains = $postData['domaintlds'];
-                $currencyMatchClient = $this->getClientArray($currency);
+                $currencyMatchClient = $this->getCurrencyArray($currency);
                 $domainDetails = Capsule::table('tbldomains')
                     ->whereIn('userid', $currencyMatchClient)
                     ->where(function ($query) use ($domains) {
@@ -184,14 +188,28 @@ class Helper
                 foreach ($domainDetails as $domain_data) {
                     $domainparts = explode(".", $domain_data->domain, 2);
                     $temppricelist = getTLDPriceList("." . $domainparts[1], "", true, $domain_data->userid);
-
                     $recuringAmount = $temppricelist[$domain_data->registrationperiod]['renew'];
 
-
                     if ($recuringAmount) {
-                        Capsule::table('tbldomains')->where('id', $domain_data->id)->update([
-                            "recurringamount" => $recuringAmount
-                        ]);
+                        $currency = getCurrency($domain_data->userid);
+                        $addonsPricing = \WHMCS\Database\Capsule::table("tblpricing")->where("type", "domainaddons")->where("currency", $currency["id"])->where("relid", 0)->first(array("msetupfee", "qsetupfee", "ssetupfee"));
+                        $domaindnsmanagementprice = $addonsPricing->msetupfee * $domain_data->registrationperiod;
+                        $domainemailforwardingprice = $addonsPricing->qsetupfee * $domain_data->registrationperiod;
+                        $domainidprotectionprice = $addonsPricing->ssetupfee * $domain_data->registrationperiod;
+                        if ($domain_data->dnsmanagement) {
+                            $recuringAmount += $domaindnsmanagementprice;
+                        }
+                        if ($domain_data->emailforwarding) {
+                            $recuringAmount += $domainemailforwardingprice;
+                        }
+                        if ($domain_data->idprotection) {
+                            $recuringAmount += $domainidprotectionprice;
+                        }
+                        if ($recuringAmount) {
+                            Capsule::table('tbldomains')->where('id', $domain_data->id)->update([
+                                "recurringamount" => $recuringAmount
+                            ]);
+                        }
                     }
                 }
             }
@@ -199,5 +217,64 @@ class Helper
         } catch (\Exception $e) {
             logActivity('Error occurred in updateCurrency: ' . $e->getMessage());
         }
+    }
+
+
+    public function recalcRecurringAddonProductPrices($userid = "", $addonid = "", $billingcycle = "", $configoptionsrecurring = "empty", $promoid = 0, $includesetup = false)
+    {
+
+        global $currency;
+        $currency = getCurrency($userid);
+        $result = select_query("tblpricing", "", array("type" => "addon", "currency" => $currency["id"], "relid" => $addonid));
+        $data = mysql_fetch_array($result);
+        if ($billingcycle == "Monthly") {
+            $amount = $data["monthly"];
+        } else {
+            if ($billingcycle == "Quarterly") {
+                $amount = $data["quarterly"];
+            } else {
+                if ($billingcycle == "Semi-Annually") {
+                    $amount = $data["semiannually"];
+                } else {
+                    if ($billingcycle == "Annually") {
+                        $amount = $data["annually"];
+                    } else {
+                        if ($billingcycle == "Biennially") {
+                            $amount = $data["biennially"];
+                        } else {
+                            if ($billingcycle == "Triennially") {
+                                $amount = $data["triennially"];
+                            } else {
+                                $amount = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if ($amount <= 0) {
+            $amount = 0;
+        }
+        if ($includesetup === true) {
+            $setupvar = substr(strtolower($billingcycle), 0, 1);
+            if (0 < $data[$setupvar . "setupfee"]) {
+                $amount += $data[$setupvar . "setupfee"];
+            }
+        }
+        if ($configoptionsrecurring == "empty") {
+            if (!function_exists("getCartConfigOptions")) {
+                require ROOTDIR . "/includes/configoptionsfunctions.php";
+            }
+            $configoptions = getCartConfigOptions($pid, "", $billingcycle, $serviceid);
+            foreach ($configoptions as $configoption) {
+                $amount += $configoption["selectedrecurring"];
+                if ($includesetup === true) {
+                    $amount += $configoption["selectedsetup"];
+                }
+            }
+        } else {
+            $amount += $configoptionsrecurring;
+        }
+        return $amount;
     }
 }

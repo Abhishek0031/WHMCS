@@ -62,26 +62,26 @@ class mymodule
         echo json_encode($result);
     }
 
-    public function imageStore(){
-        try{
-            $allowed_extensions = array(".jpg","jpeg",".png",".gif");
-            $fileName = $_FILES["img"]["name"];
-            $extension = substr($fileName,strlen($fileName)-4,strlen($fileName));
-            $uplodeDir = '../modules/addons/myaddon/storage/image/'.$_POST['img_name'].$extension;
-            
-            if(!in_array($extension,$allowed_extensions)){
-                return "<script>alert('Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
-            } elseif($_FILES["img"]["size"] < 2000000) {
-                return "<script>alert('Image is larger in Size -> max size:-20Mb ');</script>";
-            } else{
-                $check = move_uploaded_file($_FILES["img"]["tmp_name"],$uplodeDir);
-                return "image inserted"; 
+        public function imageStore(){
+            try{
+                $allowed_extensions = array(".jpg","jpeg",".png",".gif");
+                $fileName = $_FILES["img"]["name"];
+                $extension = substr($fileName,strlen($fileName)-4,strlen($fileName));
+                $uplodeDir = '../modules/addons/myaddon/storage/image/'.$_POST['img_name'].$extension;
+                
+                if(!in_array($extension,$allowed_extensions)){
+                    return "<script>alert('Invalid format. Only jpg / jpeg/ png /gif format allowed');</script>";
+                } elseif($_FILES["img"]["size"] < 2000000) {
+                    return "<script>alert('Image is larger in Size -> max size:-20Mb ');</script>";
+                } else{
+                    $check = move_uploaded_file($_FILES["img"]["tmp_name"],$uplodeDir);
+                    return "image inserted"; 
+                }
+            }
+            catch (Exception $e){
+                return "fail to insert image";
             }
         }
-        catch (Exception $e){
-            return "fail to insert image";
-        }
-    }
         
 
 public function dynamicNavMenue()
